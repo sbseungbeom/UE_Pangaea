@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Perception/AIPerceptionStimuliSourceComponent.h" //ai가 감지하는 대상에 등록하기 위해 필요함
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -40,6 +41,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlayerAvatar Params")
 	float AttackInterval = 1.2f;
 
+	UPROPERTY(VisibleAnywhere, Category = "AI")
+	UAIPerceptionStimuliSourceComponent* StimuliSource;
+
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character", Meta=(DisplayName="Get Hp"))
 	int GetHealthPoints();
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
@@ -52,6 +56,8 @@ public:
 	void Hit(int Damage);
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
 	void DieProcess();
+
+	
 
 protected:
 	int _HealthPoints;

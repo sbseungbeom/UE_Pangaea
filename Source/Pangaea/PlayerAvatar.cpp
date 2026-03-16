@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "Perception/AISenseConfig_Sight.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerAvatarAnimInstance.h"
 #include "PlayerAvatar.h"
@@ -7,6 +8,7 @@
 // Sets default values
 APlayerAvatar::APlayerAvatar()
 {
+	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSource"));
 	
 	auto characterMovement = GetCharacterMovement();
 	characterMovement->bOrientRotationToMovement = true;
@@ -44,6 +46,10 @@ APlayerAvatar::APlayerAvatar()
 void APlayerAvatar::BeginPlay()
 {
 	Super::BeginPlay();
+	if (StimuliSource) {
+		StimuliSource->RegisterForSense(UAISense_Sight::StaticClass());
+		StimuliSource->RegisterWithPerceptionSystem();
+	}
 	
 }
 
