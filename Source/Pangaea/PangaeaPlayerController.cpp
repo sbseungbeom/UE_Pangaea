@@ -50,12 +50,6 @@ void APangaeaPlayerController::SetupInputComponent()
 			
 			EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &APangaeaPlayerController::OnAttackPressed);
 			//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &APangaeaPlayerController::OnInputStarted);
-
-			// Setup touch input events
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &APangaeaPlayerController::OnInputStarted);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &APangaeaPlayerController::OnTouchTriggered);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &APangaeaPlayerController::OnTouchReleased);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &APangaeaPlayerController::OnTouchReleased);
 		}
 		else
 		{

@@ -84,8 +84,6 @@ bool APlayerAvatar::IsKilled()
 bool APlayerAvatar::CanAttack()
 {
 	UPlayerAvatarAnimInstance* animInst = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
-
-
 	return (_AttackCountingDown <= 0.0f && animInst->State == EPlayerState::Locomotion); //공격애니메이션이 끝났고, 공격 쿨타임이 끝났을 때 공격 가능.
 }
 void APlayerAvatar::Attack() {

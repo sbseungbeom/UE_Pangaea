@@ -40,19 +40,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* SetDestinationClickAction;
 
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* SetDestinationTouchAction;
-
-
 	/** Attack Action **/
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* AttackAction;
-
-
-
-
-
 
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
