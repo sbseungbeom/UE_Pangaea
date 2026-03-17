@@ -51,10 +51,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Enemy")
 	bool CanAttack();
 
-	
-	/*UFUNCTION(BlueprintCallable, Category = "Pangaea | Enemy")
-	void Chase(APawn* targetPawn);
-	*/
+
+
+
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Enemy")
 	void Attack();
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Enemy")
@@ -62,23 +61,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Enemy")
 	void DieProcess();
 
+	UFUNCTION(BlueprintCallable, Category = "Pangaea | Enemy")
+	void Set_ChasedTarget(APawn* Target);
 
-
-	/*UFUNCTION()
-	void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);*/
 
 
 private:
 	UPROPERTY()
 	class UEnemyAnimInstance* AnimInstance;
 
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Meta=(AllowPrivateAccess = "true"), Category = "AI")
-	class UAIPerceptionComponent* AI_Sensor;
 	UPROPERTY(VisibleAnywhere, Category = "AI")
 	class AEnemyAIController* EnemyController;
-	UPROPERTY(VisibleAnywhere, Category = "AI")
-	class UAISenseConfig_Sight* AI_Sight;
+
 
 
 
