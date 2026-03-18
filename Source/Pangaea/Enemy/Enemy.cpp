@@ -56,6 +56,7 @@ bool AEnemy::IsKilled() { return _HealthPoints <= 0.0f; }
 bool AEnemy::CanAttack() { return(_AttackCountingDown <= 0.0f && AnimInstance->State == EEnemyState::Locomotion); }
 void AEnemy::Attack() {
 	EnemyController->StopMovement();
+	EnemyController->bIsChasing = false;
 	_AttackCountingDown = AttackInterval;
 	AnimInstance->State = EEnemyState::Attack;
 }

@@ -17,17 +17,25 @@ class PANGAEA_API AEnemyAIController : public AAIController
 public:
 	AEnemyAIController();
 	
+	UPROPERTY(EditAnywhere, Category = "AI")
+	bool bIsChasing;
+	UPROPERTY(EditAnywhere, Category = "AI")
+	APawn* TargetPawn;
 
 	UFUNCTION()
-	void MakeAttackDecision(APawn* TargetPawn);
+	void MakeAttackDecision(APawn* _TargetPawn);
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
 
 private:
+	UPROPERTY()
+	class APlayerAvatar* Player;
+
 	UPROPERTY()
 	class AEnemy* Enemy;
 

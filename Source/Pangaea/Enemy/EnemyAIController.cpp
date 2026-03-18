@@ -5,11 +5,15 @@
 
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"	//AIPerception 컴포넌트를 사용하기 위해, 시야 센서의 헤더를 가져옴.
+#include "PlayerAvatar.h"
 #include "Enemy/Enemy.h"
 #include "Enemy/EnemyAIController.h"
 
 //생성자로 초기 값 설정
 AEnemyAIController::AEnemyAIController() {
+
+	bIsChasing = false;
+	TargetPawn = nullptr;
 
 	AI_Sensor = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception"));
 	AI_SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AI Sight Config"));
@@ -34,8 +38,17 @@ void AEnemyAIController::BeginPlay() {
 
 }
 
+void AEnemyAIController::Tick(float DeltaTime) {
 
-void AEnemyAIController::MakeAttackDecision(APawn* TargetPawn) {
+	if (bIsChasing == false && TargetPawn && Enemy->CanAttack()) {
+		bIsChasing = true;
+		MoveToActor(TargetPawn, 90.0f);
+		UE_LOG(LogTemp, Warning, TEXT("계속 쫓아가."));
+	}
+}
+
+
+void AEnemyAIController::MakeAttackDecision(APawn* _TargetPawn) {
 
 	AEnemy* ControlledCharacter = Cast<AEnemy>(GetPawn());
 	auto dist = FVector::Dist2D(TargetPawn->GetActorLocation(),ControlledCharacter->GetActorLocation());
@@ -52,25 +65,32 @@ void AEnemyAIController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus) {
 	}
 
 	// 2. 조건문 검사
-	if (Stimulus.WasSuccessfullySensed() && Actor != nullptr)
+	if (Stimulus.WasSuccessfullySensed())
 	{
 		//3.컨트롤러 이동 명령
-		UE_LOG(LogTemp, Display, TEXT("쫓아간다!!"));
-		this->MoveToActor(Actor, 90.0f);
-	
-		APawn* TargetPawn = Cast<APawn>(Actor);
-		if (TargetPawn && Enemy) {
-			Enemy->Set_ChasedTarget(TargetPawn);
-		}
-	}
-	else
-	{
-		// 추격 중지 로직이 필요할 수 있습니다 (예: this->StopMovement())
-		UE_LOG(LogTemp, Display, TEXT("놓쳤다..."));
-		this->StopMovement();
+		if (Actor != nullptr ) {
 
-		if (Enemy) {
+			Player = Cast<APlayerAvatar>(Actor);
+
+			if (Player) {
+				bIsChasing = true;
+
+				this->MoveToActor(Actor, 90.0f);
+
+				TargetPawn = Cast<APawn>(Actor);
+				if (TargetPawn && Enemy) {
+					Enemy->Set_ChasedTarget(TargetPawn);
+				}
+
+			}
+		}
+
+
+		//시야에서 플레이어를 놓쳤을 때.
+		else if (Actor == nullptr) {
+			TargetPawn = nullptr;
 			Enemy->Set_ChasedTarget(nullptr);
+			bIsChasing = false;
 		}
 	}
 }
