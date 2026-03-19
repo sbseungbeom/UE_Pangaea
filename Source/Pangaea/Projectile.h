@@ -25,7 +25,7 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Projectile Params")
-	float Speed = 100.0f;
+	float Speed = 500.0f;
 	UPROPERTY(EditAnywhere, Category = "Projectile Params")
 	float LifeSpan = 5.0f;
 	UPROPERTY(EditAnywhere, Category = "Projectile Params")

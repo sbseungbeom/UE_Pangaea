@@ -53,6 +53,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
 	void Attack();
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
+	bool IsAttacking();
+	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
 	void Hit(int Damage);
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
 	void DieProcess();

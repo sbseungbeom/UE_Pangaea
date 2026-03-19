@@ -39,6 +39,9 @@ protected:
 
 	UPROPERTY()
 	APawn* _chasedTarget = nullptr;
+
+	UClass* _WeaponClass;
+	class AWeapon* _Weapon;
 	
 public:	
 	// Called every frame

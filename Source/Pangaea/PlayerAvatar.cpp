@@ -101,6 +101,12 @@ void APlayerAvatar::Hit(int Damage) {
 	UE_LOG(LogTemp, Warning, TEXT("Hit"));
 }
 
+bool APlayerAvatar::IsAttacking() {
+	UPlayerAvatarAnimInstance* animInst = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
+	if (animInst->State == EPlayerState::Attack) return true;
+	else return false;
+}
+
 void APlayerAvatar::DieProcess() {
 	Destroy();
 	/*
