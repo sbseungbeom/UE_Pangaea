@@ -8,7 +8,6 @@
 // Sets default values
 APlayerAvatar::APlayerAvatar()
 {
-	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSource"));
 	
 	auto characterMovement = GetCharacterMovement();
 	characterMovement->bOrientRotationToMovement = true;
@@ -46,10 +45,7 @@ APlayerAvatar::APlayerAvatar()
 void APlayerAvatar::BeginPlay()
 {
 	Super::BeginPlay();
-	if (StimuliSource) {
-		StimuliSource->RegisterForSense(UAISense_Sight::StaticClass());
-		StimuliSource->RegisterWithPerceptionSystem();
-	}
+	
 	
 }
 
@@ -66,7 +62,6 @@ void APlayerAvatar::Tick(float DeltaTime)
 	}
 
 	if(_AttackCountingDown > 0.0f) _AttackCountingDown -= DeltaTime;
-	
 }
 
 // Called to bind functionality to input
@@ -95,7 +90,9 @@ bool APlayerAvatar::CanAttack()
 void APlayerAvatar::Attack() {
 	_AttackCountingDown = AttackInterval;
 	UPlayerAvatarAnimInstance* animInst = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
-	animInst->State = EPlayerState::Attack;
+	if (!IsAttacking()) {
+		animInst->State = EPlayerState::Attack;
+	}
 }
 void APlayerAvatar::Hit(int Damage) {
 	UE_LOG(LogTemp, Warning, TEXT("Hit"));

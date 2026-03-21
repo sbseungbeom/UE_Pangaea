@@ -123,8 +123,8 @@ void APangaeaPlayerController::OnTouchReleased()
 
 void APangaeaPlayerController::OnAttackPressed() {
 	auto PlayerAvatar = Cast<APlayerAvatar>(GetPawn());
-	if (PlayerAvatar->CanAttack()) {
+	if (PlayerAvatar->CanAttack() && !PlayerAvatar->IsAttacking()) {
+		UE_LOG(LogTemp, Warning, TEXT("컨트롤러 : ATTACK 실행!"));
 		PlayerAvatar->Attack();
-		
 	}
 }

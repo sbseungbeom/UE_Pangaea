@@ -41,9 +41,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlayerAvatar Params")
 	float AttackInterval = 1.2f;
 
-	UPROPERTY(VisibleAnywhere, Category = "AI")
-	UAIPerceptionStimuliSourceComponent* StimuliSource;
-
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character", Meta=(DisplayName="Get Hp"))
 	int GetHealthPoints();
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
@@ -59,7 +56,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
 	void DieProcess();
 
-	
 
 protected:
 	int _HealthPoints;
