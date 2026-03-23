@@ -2,15 +2,18 @@
 
 #pragma once
 
-#include "Perception/AIPerceptionStimuliSourceComponent.h" //ai가 감지하는 대상에 등록하기 위해 필요함
 #include "CoreMinimal.h"
+
+#include "Character/PangaeaCharacterParent.h"
+#include "Weapons/Weapon.h"
+
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "PlayerAvatar.generated.h"
 
 UCLASS(Blueprintable)
-class PANGAEA_API APlayerAvatar : public ACharacter
+class PANGAEA_API APlayerAvatar : public APangaeaCharacterParent
 {
 	GENERATED_BODY()
 
@@ -30,44 +33,21 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	UPROPERTY(EditAnywhere, Category = "PlayerAvatar Params")
-	int HealthPoints = 500;
-	UPROPERTY(EditAnywhere, Category = "PlayerAvatar Params")
-	float Strength = 10.0f;
-	UPROPERTY(EditAnywhere, Category = "PlayerAvatar Params")
-	float Armer = 3;
-	UPROPERTY(EditAnywhere, Category = "PlayerAvatar Params")
-	float AttackRange = 6.0f;
-	UPROPERTY(EditAnywhere, Category = "PlayerAvatar Params")
-	float AttackInterval = 1.2f;
+	UFUNCTION(BlueprintCallable, Category = "Pangaea|PlayerAvatar")
+	void AttachWeapon(AWeapon* Weapon);
+	UFUNCTION(BlueprintCallable, Category = "Pangaea|PlayerAvatar")
+	void DropWeapon();
 
-	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character", Meta=(DisplayName="Get Hp"))
-	int GetHealthPoints();
-	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
-	bool IsKilled();
-	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
-	bool CanAttack();
-	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
-	void Attack();
-	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
-	bool IsAttacking();
-	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
-	void Hit(int Damage);
-	UFUNCTION(BlueprintCallable, Category = "Pangaea | Player Character")
-	void DieProcess();
+	void Attack() override;
 
 
 protected:
-	int _HealthPoints;
-	float _AttackCountingDown;
 
 private:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* _springArmComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* _cameraComponent;
-
 	FORCEINLINE USpringArmComponent* GetSpringArmComponent() const { return _springArmComponent; }
 	FORCEINLINE UCameraComponent* GetCameraComponent() const { return _cameraComponent; }
 };

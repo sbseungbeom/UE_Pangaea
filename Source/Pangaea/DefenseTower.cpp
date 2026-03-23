@@ -5,6 +5,8 @@
 #include "Pangaea/PangaeaCharacter.h"
 #include "Weapons/Weapon.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "PangaeaGameMode.h"
 #include "DefenseTower.h"
 
 // Sets default values
@@ -56,6 +58,8 @@ void ADefenseTower::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActorTickInterval(0.5f);
+	_PangaeaGameMode = Cast<APangaeaGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 }
 
 // Called every frame
@@ -70,7 +74,8 @@ void ADefenseTower::Tick(float DeltaTime)
 }
 
 void ADefenseTower::Fire() {
-	auto fireball = Cast<AProjectile>(GetWorld()->SpawnActor(_FireballClass));
+	//auto fireball = Cast<AProjectile>(GetWorld()->SpawnActor(_FireballClass));
+	auto fireball = _PangaeaGameMode->SpawnOrGetFireball(_FireballClass);
 	FVector startLocation = GetActorLocation();
 	startLocation.Z += 100.0f;
 
@@ -92,11 +97,11 @@ void ADefenseTower::OnMeshBeginOverlap(AActor* OtherActor) {
 		if (player->IsAttacking() && CanBeDamaged()) {
 			//Hit(weapon->Holder->Strength)여야 하는데, 책이 진짜 너무불친절하게 만들어져 있음.
 			Hit(5);
-			UE_LOG(LogTemp, Warning, TEXT("맞았다!!"));
+			UE_LOG(LogTemp, Warning, TEXT("맞았다"));
 		}
 
 	}
-	else UE_LOG(LogTemp, Warning, TEXT("캐스팅 실패!!!!!!!!!!!!!"));
+	else UE_LOG(LogTemp, Warning, TEXT("캐스팅 실패"));
 }
 
 

@@ -10,6 +10,8 @@ UCLASS(Blueprintable)
 class PANGAEA_API AProjectile : public AActor
 {
 	GENERATED_BODY()
+
+	class APangaeaGameMode* _PangaeaGameMode;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -30,6 +32,8 @@ public:
 	float LifeSpan = 5.0f;
 	UPROPERTY(EditAnywhere, Category = "Projectile Params")
 	float Damage = 10.0f;
+
+	void Reset();
 
 protected:
 	float _LifeCountingDown;

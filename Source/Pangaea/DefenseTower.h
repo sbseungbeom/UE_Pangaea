@@ -77,6 +77,9 @@ public:
 
 
 protected:
+
+	class APangaeaGameMode* _PangaeaGameMode;
+
 	int _HealthPoints;
 	float _ReloadCountingDown;
 

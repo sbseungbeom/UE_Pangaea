@@ -2,7 +2,7 @@
 
 #include "Perception/AISenseConfig_Sight.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "PlayerAvatarAnimInstance.h"
+#include "Animation/PangaeaAnimInstance.h"
 #include "PlayerAvatar.h"
 
 // Sets default values
@@ -39,79 +39,42 @@ APlayerAvatar::APlayerAvatar()
 
 
 }
-
-
-// Called when the game starts or when spawned
 void APlayerAvatar::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
-}
 
-// Called every frame
+}
 void APlayerAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	UPlayerAvatarAnimInstance* animInst = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
-	if (animInst) {
-		animInst->Speed = GetCharacterMovement()->Velocity.Size2D(); 
-		//여기서 획득한 velocity 값은 월드 좌표 시스템의 x,y,z 축의 속도를 가리키는 FVector 이므로,
-		// 우리가 필요한것은 x,y 이니 FVector의 Size2D()의 값으로 이를 반환한다.
-	}
-
-	if(_AttackCountingDown > 0.0f) _AttackCountingDown -= DeltaTime;
+	_AnimInstance->Speed = GetCharacterMovement()->Velocity.Size2D();
+	//여기서 획득한 velocity 값은 월드 좌표 시스템의 x,y,z 축의 속도를 가리키는 FVector 이므로,
+	//우리가 필요한것은 x,y 이니 FVector의 Size2D()의 값으로 이를 반환한다.
 }
 
 // Called to bind functionality to input
 void APlayerAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-
 }
 
-int APlayerAvatar::GetHealthPoints()
-{
-	return _HealthPoints;
+void APlayerAvatar::AttachWeapon(AWeapon* weapon) {
+	weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("hand_rSocket"));
 }
+void APlayerAvatar::DropWeapon() {
 
-bool APlayerAvatar::IsKilled()
-{
-	return (_HealthPoints <= 0.0f);
-}
-
-bool APlayerAvatar::CanAttack()
-{
-	UPlayerAvatarAnimInstance* animInst = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
-	return (_AttackCountingDown <= 0.0f && animInst->State == EPlayerState::Locomotion); //공격애니메이션이 끝났고, 공격 쿨타임이 끝났을 때 공격 가능.
-}
-void APlayerAvatar::Attack() {
-	_AttackCountingDown = AttackInterval;
-	UPlayerAvatarAnimInstance* animInst = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!IsAttacking()) {
-		animInst->State = EPlayerState::Attack;
+	TArray<AActor*> attachedActors;
+	GetAttachedActors(attachedActors, true);
+	for (int i = 0; i < attachedActors.Num(); ++i) {
+		attachedActors[i]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		attachedActors[i]->SetActorRotation(FQuat::Identity);
+		AWeapon* weapon = Cast<AWeapon>(attachedActors[i]);
+		if (weapon != nullptr) {
+			weapon->Holder = nullptr;
+		}
 	}
 }
-void APlayerAvatar::Hit(int Damage) {
-	UE_LOG(LogTemp, Warning, TEXT("Hit"));
-}
-
-bool APlayerAvatar::IsAttacking() {
-	UPlayerAvatarAnimInstance* animInst = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
-	if (animInst->State == EPlayerState::Attack) return true;
-	else return false;
-}
-
-void APlayerAvatar::DieProcess() {
-	Destroy();
-	/*
-	*이 작업은 Destroy() 단 한줄로 치환 가능하다.
-	PrimaryActorTick.bCanEverTick = false;
-	Destroy();
-	GEngine->ForceGarbageCollection(true);
-	*/
-	
+void APlayerAvatar::Attack() {
+	APangaeaCharacterParent::Attack();
 }
 
