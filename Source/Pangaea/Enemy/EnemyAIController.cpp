@@ -28,6 +28,8 @@ AEnemyAIController::AEnemyAIController() {
 	AI_Sensor->ConfigureSense(*AI_SightConfig);
 	AI_Sensor->SetDominantSense(AI_SightConfig->GetSenseImplementation());
 
+	ChaseRetentionTime = 3.0f;
+
 }
 
 void AEnemyAIController::BeginPlay() {
@@ -36,15 +38,19 @@ void AEnemyAIController::BeginPlay() {
 	Enemy = Cast<AEnemy>(this->GetPawn());
 	AI_Sensor->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnTargetDetected);
 
+	InitialLocation = this->GetPawn()->GetActorLocation();
+
 }
 
 void AEnemyAIController::Tick(float DeltaTime) {
 
+	
 	if (bIsChasing == false && TargetPawn && Enemy->CanAttack()) {
-		bIsChasing = true;
-		MoveToActor(TargetPawn, 90.0f);
-		UE_LOG(LogTemp, Warning, TEXT("계속 쫓아가."));
+		KeepChasing();
 	}
+
+
+	
 }
 
 
@@ -55,7 +61,24 @@ void AEnemyAIController::MakeAttackDecision(APawn* _TargetPawn) {
 	
 	if (dist <= ControlledCharacter->AttackRange && ControlledCharacter->CanAttack()) {
 		ControlledCharacter->Attack();
+		bIsChasing = false;
 	}
+	
+}
+void AEnemyAIController::KeepChasing() {
+	MoveToActor(TargetPawn, 90.0f);
+	UE_LOG(LogTemp, Warning, TEXT("계속 쫓아가."));
+	bIsChasing = true;
+
+	
+	GetWorldTimerManager().SetTimer(ChasingTimerHandle, this, &AEnemyAIController::ResetChasing, ChaseRetentionTime, false);
+}
+
+void AEnemyAIController::ResetChasing() {
+	TargetPawn = nullptr;
+	Enemy->Set_ChasedTarget(nullptr);
+	bIsChasing = false;
+	MoveToLocation(InitialLocation, 30.0f);
 }
 
 void AEnemyAIController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus) {
@@ -67,31 +90,30 @@ void AEnemyAIController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus) {
 	// 2. 조건문 검사
 	if (Stimulus.WasSuccessfullySensed())
 	{
+
+		GetWorldTimerManager().ClearTimer(ChasingTimerHandle);
 		//3.컨트롤러 이동 명령
 		if (Actor != nullptr ) {
 
 			Player = Cast<APlayerAvatar>(Actor);
 
 			if (Player) {
-				bIsChasing = true;
-
-				this->MoveToActor(Actor, 90.0f);
-
 				TargetPawn = Cast<APawn>(Actor);
 				if (TargetPawn && Enemy) {
+					UE_LOG(LogTemp, Warning, TEXT("플레이어 식별, 추적 개시"));
+					this->MoveToActor(Actor, 90.0f);
+					bIsChasing = true;
 					Enemy->Set_ChasedTarget(TargetPawn);
 				}
 
 			}
 		}
 
-
-		//시야에서 플레이어를 놓쳤을 때.
-		else if (Actor == nullptr) {
-			TargetPawn = nullptr;
-			Enemy->Set_ChasedTarget(nullptr);
-			bIsChasing = false;
-		}
 	}
+	else{
+		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지범위 밖으로 감."));
+		bIsChasing = false;
+	}
+	
 }
 
