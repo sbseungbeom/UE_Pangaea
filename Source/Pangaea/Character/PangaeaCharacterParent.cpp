@@ -12,6 +12,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include <Net/UnrealNetwork.h>
+#include "Widget/HealthBarWidget.h"
 void APangaeaCharacterParent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APangaeaCharacterParent, _HealthPoints);
@@ -31,6 +32,7 @@ void APangaeaCharacterParent::BeginPlay()
 	Super::BeginPlay();
 	_AnimInstance = Cast<UPangaeaAnimInstance>(GetMesh()->GetAnimInstance());
 	_HealthPoints = HealthPoints;
+	OnHealthPointsChanged();
 }
 
 // Called every frame
@@ -87,5 +89,17 @@ void APangaeaCharacterParent::Attack_Broadcast_RPC_Implementation() {
 
 void APangaeaCharacterParent::OnHealthPointsChanged() {
 	//체력바 업데이트
+	if (HealthBarWidget) {
+		float normalizedHealth = FMath::Clamp((float) _HealthPoints / HealthPoints, 0.0f, 1.0f);
+		auto healthBar = Cast<UHealthBarWidget>(HealthBarWidget);
+		healthBar->HealthProgressBar->SetPercent(normalizedHealth);
+	}
+	if (_AnimInstance != nullptr) {
+		_AnimInstance->State = ECharacterState::Hit;
+	}
+	if (IsKilled()) {
+		DieProcess();
+	}
+	
 }
 

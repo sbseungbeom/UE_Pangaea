@@ -63,5 +63,8 @@ public:
 	UFUNCTION()
 	void OnHealthPointsChanged();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UUserWidget* HealthBarWidget;
+
  
 };
