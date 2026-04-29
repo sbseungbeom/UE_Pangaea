@@ -60,7 +60,7 @@ void AEnemyAIController::MakeAttackDecision(APawn* _TargetPawn) {
 	auto dist = FVector::Dist2D(TargetPawn->GetActorLocation(),ControlledCharacter->GetActorLocation());
 	
 	if (dist <= ControlledCharacter->AttackRange && ControlledCharacter->CanAttack()) {
-		ControlledCharacter->Attack();
+		ControlledCharacter->Attack_Broadcast_RPC();
 		bIsChasing = false;
 	}
 	

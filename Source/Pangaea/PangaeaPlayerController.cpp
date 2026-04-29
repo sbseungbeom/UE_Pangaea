@@ -125,6 +125,6 @@ void APangaeaPlayerController::OnAttackPressed() {
 	auto PlayerAvatar = Cast<APlayerAvatar>(GetPawn());
 	if (PlayerAvatar->CanAttack()) {
 		UE_LOG(LogTemp, Warning, TEXT("컨트롤러 : ATTACK 실행!"));
-		PlayerAvatar->Attack();
+		PlayerAvatar->Attack_RPC();
 	}
 }

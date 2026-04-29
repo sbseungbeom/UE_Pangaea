@@ -40,6 +40,9 @@ public:
 
 	void Attack() override;
 
+	UFUNCTION(Server,Reliable)
+	void Attack_RPC();
+
 
 protected:
 

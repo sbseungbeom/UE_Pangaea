@@ -53,5 +53,7 @@ public:
 	virtual void Hit(int Damage);
 	virtual void DieProcess();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Attack_Broadcast_RPC();
 
 };

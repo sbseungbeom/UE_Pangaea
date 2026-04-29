@@ -76,3 +76,7 @@ void APangaeaCharacterParent::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 }
 
+void APangaeaCharacterParent::Attack_Broadcast_RPC_Implementation() {
+	Attack();
+}
+

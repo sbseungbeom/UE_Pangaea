@@ -78,3 +78,7 @@ void APlayerAvatar::Attack() {
 	APangaeaCharacterParent::Attack();
 }
 
+void APlayerAvatar::Attack_RPC_Implementation() {
+	Attack_Broadcast_RPC();
+}
+
