@@ -11,13 +11,18 @@
 #include "GameFramework/PlayerController.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include <Net/UnrealNetwork.h>
+void APangaeaCharacterParent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APangaeaCharacterParent, _HealthPoints);
+}
 
 // Sets default values
 APangaeaCharacterParent::APangaeaCharacterParent()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -78,5 +83,9 @@ void APangaeaCharacterParent::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 void APangaeaCharacterParent::Attack_Broadcast_RPC_Implementation() {
 	Attack();
+}
+
+void APangaeaCharacterParent::OnHealthPointsChanged() {
+	//체력바 업데이트
 }
 

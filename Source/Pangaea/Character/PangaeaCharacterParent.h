@@ -30,7 +30,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	class UPangaeaAnimInstance* _AnimInstance;
+
+	UPROPERTY(Replicatedusing = OnHealthPointsChanged)
 	int _HealthPoints;
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	float _AttackCountingDown;
 
 public:	
@@ -55,5 +60,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Attack_Broadcast_RPC();
+	UFUNCTION()
+	void OnHealthPointsChanged();
 
+ 
 };
