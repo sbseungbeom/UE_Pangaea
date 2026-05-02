@@ -63,10 +63,17 @@ void APangaeaCharacterParent::Attack() {
 
 }
 void APangaeaCharacterParent::Hit(int Damage) {
-	_HealthPoints -= Damage;
+	//_HealthPoints -= Damage;
 	_AnimInstance->State = ECharacterState::Hit;
 	if (IsKilled()) {
 		DieProcess();
+		return;
+	}
+
+	if (GetNetMode() == ENetMode::NM_ListenServer && HasAuthority()) {
+		_HealthPoints -= Damage;
+		OnHealthPointsChanged();
+		return;
 	}
 }
 void APangaeaCharacterParent::DieProcess() {

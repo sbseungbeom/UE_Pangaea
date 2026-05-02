@@ -26,36 +26,38 @@ void AProjectile::BeginPlay()
 void AProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (GetNetMode() != NM_Client) {
+		if (_LifeCountingDown > 0.0f) {
 
-	if (_LifeCountingDown > 0.0f) {
+			_LifeCountingDown -= DeltaTime;
 
-		_LifeCountingDown -= DeltaTime;
+			FVector currentLocation = GetActorLocation();
+			FVector vel = GetActorRotation().RotateVector(FVector::ForwardVector) * Speed * DeltaTime;
+			FVector nextLocation = currentLocation + vel;
+			SetActorLocation(nextLocation);
 
-		FVector currentLocation = GetActorLocation();
-		FVector vel = GetActorRotation().RotateVector(FVector::ForwardVector) * Speed * DeltaTime;
-		FVector nextLocation = currentLocation + vel;
-		SetActorLocation(nextLocation);
+			FHitResult hitResult;
+			FCollisionObjectQueryParams objCollisionQueryParams;
+			objCollisionQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
 
-		FHitResult hitResult;
-		FCollisionObjectQueryParams objCollisionQueryParams;
-		objCollisionQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+			if (GetWorld()->LineTraceSingleByObjectType(hitResult, currentLocation, nextLocation, objCollisionQueryParams)) {
+				auto playerAvatar = Cast<APlayerAvatar>(hitResult.GetActor());
 
-		if (GetWorld()->LineTraceSingleByObjectType(hitResult, currentLocation, nextLocation, objCollisionQueryParams)) {
-			auto playerAvatar = Cast<APlayerAvatar>(hitResult.GetActor());
-
-			if (playerAvatar != nullptr) {
-				playerAvatar->Hit(Damage);
-				PrimaryActorTick.bCanEverTick = false;
-				//Destroy();
-				_PangaeaGameMode->RecycleFireball(this);
+				if (playerAvatar != nullptr) {
+					playerAvatar->Hit(Damage);
+					PrimaryActorTick.bCanEverTick = false;
+					//Destroy();
+					_PangaeaGameMode->RecycleFireball(this);
+				}
 			}
 		}
+		else {
+			PrimaryActorTick.bCanEverTick = false;
+			//Destroy();
+			_PangaeaGameMode->RecycleFireball(this);
+		}
 	}
-	else {
-		PrimaryActorTick.bCanEverTick = false;
-		//Destroy();
-		_PangaeaGameMode->RecycleFireball(this);
-	}
+
 }
 
 void AProjectile::Reset() {
