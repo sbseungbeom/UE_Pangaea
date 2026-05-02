@@ -12,6 +12,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "Pangaea.h"
+#include "Blueprint/UserWidget.h"
 
 APangaeaPlayerController::APangaeaPlayerController()
 {
@@ -126,5 +127,25 @@ void APangaeaPlayerController::OnAttackPressed() {
 	if (PlayerAvatar->CanAttack()) {
 		UE_LOG(LogTemp, Warning, TEXT("컨트롤러 : ATTACK 실행!"));
 		PlayerAvatar->Attack_RPC();
+	}
+}
+
+// 서버에서 호출되면 → 해당 클라이언트(혹은 호스트 자신)의 로컬 머신에서 실행됨.
+// 여기서 위젯을 만들고 화면에 올리고, UI 조작이 가능하도록 입력 모드를 UI Only로 전환.
+void APangaeaPlayerController::Client_ShowVictory_Implementation()
+{
+	if (!IsLocalController()) return;          // 자기 자신이 컨트롤하는 PC일 때만
+	if (VictoryWidgetClass == nullptr) return; // BP에서 위젯 클래스가 지정되어야 함
+	if (VictoryWidget != nullptr) return;      // 이미 떠 있으면 중복 생성 방지
+
+	VictoryWidget = CreateWidget<UUserWidget>(this, VictoryWidgetClass);
+	if (VictoryWidget)
+	{
+		VictoryWidget->AddToViewport();
+
+		bShowMouseCursor = true;
+		FInputModeUIOnly InputMode;
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		SetInputMode(InputMode);
 	}
 }

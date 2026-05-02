@@ -2,6 +2,9 @@
 
 
 #include "PangaeaGameMode.h"
+#include "PangaeaPlayerController.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
 
 APangaeaGameMode::APangaeaGameMode()
 {
@@ -49,6 +52,22 @@ void APangaeaGameMode::RecycleFireball(AProjectile* projectile) {
     projectile->SetActorEnableCollision(true);
     projectile->SetActorTickEnabled(false);
     _FireballPool.Enqueue(projectile);
+}
+
+// 서버에 접속한 모든 PlayerController에 Victory UI 표시 RPC를 보낸다.
+// 호스트(리슨서버)도 PC를 가지고 있기 때문에 호스트의 화면에도 동일하게 뜬다.
+void APangaeaGameMode::NotifyTowerDestroyed()
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+    {
+        if (APangaeaPlayerController* PC = Cast<APangaeaPlayerController>(It->Get()))
+        {
+            PC->Client_ShowVictory();
+        }
+    }
 }
 
 

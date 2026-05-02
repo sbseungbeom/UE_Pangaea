@@ -82,6 +82,7 @@ protected:
 
 	int _HealthPoints;
 	float _ReloadCountingDown;
+	bool _bDestroyed = false;	// 타워 파괴 알림이 한 번만 발동되도록 막는 1회용 가드
 
 	void DestroyProcess();
 

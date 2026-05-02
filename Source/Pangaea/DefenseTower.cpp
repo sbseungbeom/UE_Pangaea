@@ -71,6 +71,10 @@ void ADefenseTower::Tick(float DeltaTime)
 		Fire();
 	}
 
+	// 서버에서만 HP를 검사해서 0 이하가 되면 파괴 처리 1회 실행
+	if (GetNetMode() != NM_Client && !_bDestroyed && HealthPoints <= 0) {
+		DestroyProcess();
+	}
 }
 
 void ADefenseTower::Fire() {
@@ -87,6 +91,9 @@ void ADefenseTower::Fire() {
 	fireball->SetActorRotation(rotation);
 }
 void ADefenseTower::OnMeshBeginOverlap(AActor* OtherActor) {
+	// 데미지 판정은 서버 권한. 클라쪽 호출은 즉시 컷 → 양쪽 데미지 중복 방지
+	if (GetNetMode() == NM_Client) return;
+
 	AWeapon* weapon = Cast<AWeapon>(OtherActor);
 	if (weapon == nullptr || weapon->Holder == nullptr) {
 		return;
@@ -122,4 +129,22 @@ void ADefenseTower::Hit(int Damage) {
 bool ADefenseTower::CanFire()
 {
 	return (_ReloadCountingDown <= 0.0f);
+}
+
+void ADefenseTower::DestroyProcess()
+{
+	if (_bDestroyed) return;	// 이미 처리됐으면 무시
+	_bDestroyed = true;
+
+	// 자기 자신 비활성화
+	SetActorTickEnabled(false);
+	SetActorEnableCollision(false);
+	if (_MeshComponent) {
+		_MeshComponent->SetVisibility(false);
+	}
+
+	// GameMode에게 "타워 파괴됨" 통지 → GameMode가 모든 PC에 Victory UI 송출
+	if (_PangaeaGameMode) {
+		_PangaeaGameMode->NotifyTowerDestroyed();
+	}
 }

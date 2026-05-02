@@ -75,6 +75,20 @@ protected:
 
 	void OnAttackPressed();
 
+public:
+	// 서버가 호출하면 해당 클라이언트 화면에 Victory 위젯을 띄우는 RPC.
+	// (호스트=리슨서버 자신도 PC를 가지므로 호스트 화면에도 동일하게 표시됨)
+	UFUNCTION(Client, Reliable)
+	void Client_ShowVictory();
+
+protected:
+	// BP_PangaeaPlayerController의 디테일 패널에서 WBP_Victory를 지정해줄 슬롯.
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> VictoryWidgetClass;
+
+	// 생성된 Victory 위젯 인스턴스(중복 생성 방지용으로 보관)
+	UPROPERTY()
+	class UUserWidget* VictoryWidget;
 };
 
 
